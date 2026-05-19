@@ -157,9 +157,10 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; NDEBUG;_CONSOLE;%(PreprocessorDefinitions); </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\MySQL\MySQL Connector C++ 9.7\include\jdbc;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Program Files\MySQL\MySQL Connector C++ 9.7\lib64\vs14;</AdditionalLibraryDirectories>
       <AdditionalDependencies>mysqlcppconn.lib; $(CoreLibraryDependencies);%(AdditionalDependencies);</AdditionalDependencies>
@@ -171,11 +172,11 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sql\sql_db.cpp" />
-    <ClCompile Include="src\window\window.cpp" />
+    <ClCompile Include="src\window\window_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\sql\sql_db.h" />
-    <ClInclude Include="src\window\window.h" />
+    <ClInclude Include="src\window\window_ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

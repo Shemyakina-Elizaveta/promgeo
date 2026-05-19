@@ -24,7 +24,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\window\window.cpp">
+    <ClCompile Include="src\window\window_ui.cpp">
       <Filter>Исходные файлы\window</Filter>
     </ClCompile>
     <ClCompile Include="src\sql\sql_db.cpp">
@@ -32,7 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\window\window.h">
+    <ClInclude Include="src\window\window_ui.h">
       <Filter>Исходные файлы\window</Filter>
     </ClInclude>
     <ClInclude Include="src\sql\sql_db.h">

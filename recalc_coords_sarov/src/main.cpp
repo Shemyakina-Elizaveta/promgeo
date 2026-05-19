@@ -3,27 +3,51 @@
 #include <windows.h>
 
 #include "sql/sql_db.h"
-#include "window/window.h"
+#include "window/window_ui.h"
 
 
 /***
- * Main function.
- * ARGUMENTS: None;
- * RETURNS: 
- *    (int) Program completion code.
+ * Entry point for Unicode applications in Visual Studio.
+ * ARGUMENTS:
+ *    - Handle to the current instance of the application:
+ *        HINSTANCE hInst;
+ *    - Handle to the previous instance of the application (always NULL):
+ *        HINSTANCE hPrevInst;
+ *    - The command line for the application, excluding the program name:
+ *        LPWSTR lpCmdLine;
+ *    - Controls how the window is to be shown:
+ *        int nCmdShow;
+ * RETURNS:
+ *    (int) program completion code.
  ***/
-int main( void )
+int WINAPI wWinMain( HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int nCmdShow )
 {
-  /* Settings to work with russian language */
   SetConsoleOutputCP(CP_UTF8);
-  SetConsoleCP(CP_UTF8);
   setlocale(LC_ALL, "Russian");
 
+  std::cout << "Запуск окна ввода данных...\n";
 
-  sql_db Database;
+  window_ui app;
 
-  std::cout << Database.get_tah_id("Т2.7") << "\n";
-  std::cout << "Ok\n";
+  app.Run(hInst, nCmdShow);
+
+  if (!app.is_data_ready())
+  {
+    std::cout << "Ввод отменен пользователем.\n";
+    return 0;
+  }
+
+  std::string tah_name = app.get_tah_name();
+  std::string d1 = app.get_first_date();
+  std::string d2 = app.get_second_date();
+
+  std::cout << "\nДанные успешно получены:\n";
+  std::cout << "Исходный пункт: " << tah_name << "\n";
+  std::cout << "Дата 1: " << d1 << "\n";
+  std::cout << "Дата 2: " << d2 << "\n";
+  
+  std::cin.get();
 
   return 0;
-} /* End of 'main' function */
+}
+
