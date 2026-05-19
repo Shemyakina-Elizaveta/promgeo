@@ -13,10 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\window">
+      <UniqueIdentifier>{af088993-2b18-458c-8f0a-99c01d134112}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\sql">
+      <UniqueIdentifier>{12dc9dfb-aa6f-4225-bba7-759bfd3dd8ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\window\window.cpp">
+      <Filter>Исходные файлы\window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sql\sql_db.cpp">
+      <Filter>Исходные файлы\sql</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\window\window.h">
+      <Filter>Исходные файлы\window</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sql\sql_db.h">
+      <Filter>Исходные файлы\sql</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
