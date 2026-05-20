@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <windows.h>
+#include <fstream>
 
 #include "sql/sql_db.h"
 #include "window/window_ui.h"
@@ -27,6 +28,7 @@ int WINAPI wWinMain( HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int
 
   std::cout << "Запуск окна ввода данных...\n";
 
+  /* Get information from window */
   window_ui app;
 
   app.Run(hInst, nCmdShow);
@@ -41,11 +43,33 @@ int WINAPI wWinMain( HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int
   std::string d1 = app.get_first_date();
   std::string d2 = app.get_second_date();
 
-  std::cout << "\nДанные успешно получены:\n";
-  std::cout << "Исходный пункт: " << tah_name << "\n";
-  std::cout << "Дата 1: " << d1 << "\n";
-  std::cout << "Дата 2: " << d2 << "\n";
+  /* Getting information from database */
+  sql_db Database;
+  std::map<std::string, std::vector<point_info>> points_info_first_date;
+
+  points_info_first_date = Database.get_points_from_db(tah_name, d1);
+
+  // Проверка записи в файл
   
+  /*
+  std::ofstream output_file;
+
+  output_file.open("D:/repositories/promgeo/recalc_coords_sarov/results/test.txt");
+  
+  if (!output_file.is_open())
+    return;
+
+  output_file << point_name << "\n"
+              << "    cycle_id: " << cycle_id << "\n"
+              << "    circle: " << circle << "\n"
+              << "    azimuth: " << azimuth << "\n"
+              << "    inclination: " << inclination << "\n"
+              << "    distance: " << distance << "\n";
+              */
+
+
+  std::cin.get();
+  std::cin.get();
   std::cin.get();
 
   return 0;

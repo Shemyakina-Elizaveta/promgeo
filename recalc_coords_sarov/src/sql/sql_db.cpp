@@ -1,41 +1,16 @@
 ﻿#include <iostream>
 #include <string>
-#include <mysql_driver.h>
-#include <mysql_connection.h>
-#include <cppconn/prepared_statement.h>
-#include <cppconn/resultset.h>
-#include <cppconn/exception.h>
+#include <fstream>
+
 
 #include "sql_db.h"
 
 
-/***
- * Get information from database function.
- * ARGUMENTS: None;
- * RETURNS: None.
- ***/
-void sql_db::get_info_from_db( void )
+/* Default Constructor */
+sql_db::sql_db( void )
 {
-} /* End of 'sql_db::get_info_from_db' function */
-
-
-/***
- * Get taheometer ID from taheometer name function.
- * ARGUMENTS:
- *    - taheometer name:
- *        std::string tah_name;
- * RETURNS:
- *    (int) taheometer id.
- ***/
-int sql_db::get_tah_id( std::string tah_name )
-{
-  sql::mysql::MySQL_Driver *driver = nullptr;
-  sql::Connection *connection = nullptr;
-  int recieved_tah_id = -1;
-
   try
   {
-    /*  Connect to sql */
     driver = sql::mysql::get_driver_instance();
     connection = driver->connect(HOST, USER, PASSWORD);
 
@@ -47,13 +22,43 @@ int sql_db::get_tah_id( std::string tah_name )
     sql::Statement *stmt = connection->createStatement();
     stmt->execute("SET NAMES utf8mb4");
     delete stmt;
+  }
+  catch (sql::SQLException &e)
+  {
+    std::cerr << "SQL Error: " << e.what() << "\n";
+    std::cerr << "MySQL Code: " << e.getErrorCode() << "\n";
+    std::cerr << "SQLState: " << e.getSQLState() << "\n";
+  }
+} /* End of 'sql_db::sql_db' function */
 
-    /* Set query to get information */
+/* Destructor */
+sql_db::~sql_db( void )
+{
+  if (connection)
+    delete connection;
+} /* End of 'sql_db::~sql_db' function */
+
+
+/***
+ * Get taheometer ID from taheometer name function.
+ * ARGUMENTS:
+ *    - taheometer name:
+ *        std::string &tah_name;
+ * RETURNS:
+ *    (int) taheometer id.
+ ***/
+int sql_db::get_tah_id( std::string &tah_name )
+{
+  int recieved_tah_id = -1;
+
+  try
+  {
+    /* Set query to  get information */
     std::string query = "SELECT ID FROM taheometer WHERE tah_name = ?;"; 
     sql::PreparedStatement *pstmt = connection->prepareStatement(query);
-    std::string correct_tah_name = cp1251_to_utf8(tah_name);
+    // std::string correct_tah_name = cp1251_to_utf8(tah_name);
     
-    pstmt->setString(1, correct_tah_name);
+    pstmt->setString(1, tah_name);
 
     sql::ResultSet *res = pstmt->executeQuery();
 
@@ -74,34 +79,81 @@ int sql_db::get_tah_id( std::string tah_name )
     std::cerr << "SQLState: " << e.getSQLState() << "\n";
   }
 
-  if (connection)
-    delete connection;
-
   return recieved_tah_id;
 } /* End of 'sql_db::get_tah_id' function */
 
 
 /***
- * Convertation text from cp1251 to utf8 function.
+ * Get all points information from database function.
  * ARGUMENTS:
- *    - string in cp1251 charset:
- *        std::string &str_cp1251;
+ *    - the name of taheometer from which the measurements are taken:
+ *        std::string &tah_name;
+ *    - date of measurement (YYYY-MM-DD):
+ *        std::string &date;
  * RETURNS:
- *    (std::string) string in utf8 charset.
+ *    (std::map<std::string, point_info>) map for saving points.
  ***/
-std::string sql_db::cp1251_to_utf8( const std::string& str_cp1251 )
+std::map<std::string, std::vector<point_info>> sql_db::get_points_from_db( std::string &tah_name, std::string &date )
 {
-  int size_wide = MultiByteToWideChar(CP_ACP, 0, str_cp1251.c_str(), -1, NULL, 0);
-  wchar_t* wide_str = new wchar_t[size_wide];
-  MultiByteToWideChar(CP_ACP, 0, str_cp1251.c_str(), -1, wide_str, size_wide);
+  int tah_id = get_tah_id(tah_name);
+  std::map<std::string, std::vector<point_info>> saved_points;
 
-  int size_utf8 = WideCharToMultiByte(CP_UTF8, 0, wide_str, -1, NULL, 0, NULL, NULL);
-  char* utf8_str = new char[size_utf8];
-  WideCharToMultiByte(CP_UTF8, 0, wide_str, -1, utf8_str, size_utf8, NULL, NULL);
+  try
+  {
+    std::string query = 
+      "SELECT "
+	    "points.name, "
+      "points.id, "
+      "measurement.cycle_id, "
+      "measurement.circle, "
+      "measurement.status, "
+      "measurement.azimuth, "
+      "measurement.inclination, "
+      "measurement.distance "
+      "FROM measurement "
+      "JOIN cycle ON measurement.cycle_id = cycle.ID "
+      "JOIN points ON measurement.point_id = points.ID "
+      "WHERE "
+      "    cycle.begin > ? AND "
+      "    cycle.begin < ? AND "
+      "    measurement.status = 1 AND "
+      "    points.type = 0 AND "
+      "    measurement.tah_id = ?;";
 
-  std::string result(utf8_str);
-  
-  delete[] wide_str;
-  delete[] utf8_str;
-  return result;
-} /* End of 'sql_db::cp1251_to_utf8' function */
+    sql::PreparedStatement *pstmt = connection->prepareStatement(query);
+    std::string 
+      correct_start_date_time = date + " 00:00:00 ",
+      correct_end_date_time = date + " 23:59:59 ";
+    
+    pstmt->setString(1, correct_start_date_time);
+    pstmt->setString(2, correct_end_date_time);
+    pstmt->setInt(3, tah_id);
+
+    sql::ResultSet *res = pstmt->executeQuery();
+
+    while (res->next())
+    {
+      std::string point_name = res->getString("name");
+      point_info pi;
+      int circle = res->getInt("circle");
+      
+      pi.cycle_id = res->getInt("cycle_id");
+      pi.coords[circle].azimuth = res->getDouble("azimuth");
+      pi.coords[circle].inclination = res->getDouble("inclination");
+      pi.coords[circle].distance = res->getDouble("distance");
+
+      saved_points[point_name].push_back(pi);
+    }
+
+    delete res;
+    delete pstmt; 
+  }
+  catch (sql::SQLException &e)
+  {
+    std::cerr << "SQL Error: " << e.what() << "\n";
+    std::cerr << "MySQL Code: " << e.getErrorCode() << "\n";
+    std::cerr << "SQLState: " << e.getSQLState() << "\n";
+  }
+
+  return saved_points;
+} /* End of 'sql_db::get_points_from_db' function */

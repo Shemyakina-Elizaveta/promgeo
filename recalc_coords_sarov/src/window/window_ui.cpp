@@ -259,12 +259,17 @@ void window_ui::CreateInterface( HWND hwnd )
   hTahEdit = CreateWindowW(L"EDIT", L"", WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | WS_TABSTOP, PADDING + LABEL_WIDTH + 15, 78, 250, FIELD_HEIGHT, hwnd, (HMENU)101, 0, 0);
   SendMessage(hTahEdit, WM_SETFONT, (WPARAM)hFontNormal, TRUE);
   SendMessage(hTahEdit, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(10, 10));
+  SetWindowTextW(hTahEdit, L"Ò1.2");
 
   hDate1Picker = CreateWindowW(DATETIMEPICK_CLASSW, L"", WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT | WS_TABSTOP, PADDING + LABEL_WIDTH + 15, 128, 250, FIELD_HEIGHT, hwnd, (HMENU)102, 0, 0);
   SendMessage(hDate1Picker, WM_SETFONT, (WPARAM)hFontNormal, TRUE);
   SendMessage(hDate1Picker, DTM_SETFORMAT, 0, (LPARAM)L"yyyy-MM-dd");
-  SYSTEMTIME st; GetLocalTime(&st);
+  SYSTEMTIME st = {};
+  st.wYear = 2021;
+  st.wMonth = 10;
+  st.wDay = 16;
   SendMessage(hDate1Picker, DTM_SETSYSTEMTIME, GDT_VALID, (LPARAM)&st);
+
 
   hDate2Picker = CreateWindowW(DATETIMEPICK_CLASSW, L"", WS_CHILD | WS_VISIBLE | DTS_SHORTDATEFORMAT | WS_TABSTOP, PADDING + LABEL_WIDTH + 15, 178, 250, FIELD_HEIGHT, hwnd, (HMENU)103, 0, 0);
   SendMessage(hDate2Picker, WM_SETFONT, (WPARAM)hFontNormal, TRUE);
