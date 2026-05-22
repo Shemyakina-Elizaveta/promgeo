@@ -22,7 +22,7 @@ std::string window_ui::WStringToUtf8( const wchar_t *wstr )
     return "";
   
   int size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, nullptr, 0, nullptr, nullptr);
-  std::string str(size, 0);
+  std::string str(size - 1, 0);
   
   WideCharToMultiByte(CP_UTF8, 0, wstr, -1, &str[0], size, nullptr, nullptr);
   
@@ -45,9 +45,6 @@ std::string window_ui::SystemTimeToString( const SYSTEMTIME &st )
   snprintf(buffer, sizeof(buffer), "%04d-%02d-%02d", st.wYear, st.wMonth, st.wDay);
   return std::string(buffer);
 } /* End of 'window_ui::SystemTimeToString' function */
-
-
-
 
 
 /***

@@ -56,7 +56,6 @@ int sql_db::get_tah_id( std::string &tah_name )
     /* Set query to  get information */
     std::string query = "SELECT ID FROM taheometer WHERE tah_name = ?;"; 
     sql::PreparedStatement *pstmt = connection->prepareStatement(query);
-    // std::string correct_tah_name = cp1251_to_utf8(tah_name);
     
     pstmt->setString(1, tah_name);
 
@@ -86,18 +85,18 @@ int sql_db::get_tah_id( std::string &tah_name )
 /***
  * Get all points information from database function.
  * ARGUMENTS:
+ *    - map for saving points:
+ *        std::map<std::string, std::map<int, point_polar_coords [2]>> &saved_points;
  *    - the name of taheometer from which the measurements are taken:
  *        std::string &tah_name;
  *    - date of measurement (YYYY-MM-DD):
  *        std::string &date;
- * RETURNS:
- *    (std::map<std::string, point_info>) map for saving points.
+ * RETURNS: None.
  ***/
-std::map<std::string, std::vector<point_info>> sql_db::get_points_from_db( std::string &tah_name, std::string &date )
+void sql_db::get_points_from_db( std::map<std::string, std::map<int, point_polar_coords [2]>> &saved_points, std::string &tah_name, std::string &date )
 {
   int tah_id = get_tah_id(tah_name);
-  std::map<std::string, std::vector<point_info>> saved_points;
-
+  
   try
   {
     std::string query = 
@@ -134,15 +133,13 @@ std::map<std::string, std::vector<point_info>> sql_db::get_points_from_db( std::
     while (res->next())
     {
       std::string point_name = res->getString("name");
-      point_info pi;
       int circle = res->getInt("circle");
+      int cycle_id = res->getInt("cycle_id");
       
-      pi.cycle_id = res->getInt("cycle_id");
-      pi.coords[circle].azimuth = res->getDouble("azimuth");
-      pi.coords[circle].inclination = res->getDouble("inclination");
-      pi.coords[circle].distance = res->getDouble("distance");
-
-      saved_points[point_name].push_back(pi);
+      // saved_points[point_name][cycle_id][circle].azimuth = 
+      saved_points[point_name][cycle_id][circle].azimuth = res->getDouble("azimuth");
+      saved_points[point_name][cycle_id][circle].inclination = res->getDouble("inclination");
+      saved_points[point_name][cycle_id][circle].distance = res->getDouble("distance");
     }
 
     delete res;
@@ -155,5 +152,5 @@ std::map<std::string, std::vector<point_info>> sql_db::get_points_from_db( std::
     std::cerr << "SQLState: " << e.getSQLState() << "\n";
   }
 
-  return saved_points;
 } /* End of 'sql_db::get_points_from_db' function */
+

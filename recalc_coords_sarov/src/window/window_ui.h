@@ -37,7 +37,7 @@ private:
     BTN_HEIGHT = 44,
     BTN_WIDTH = 250;
 
-    /***
+  /***
    * Convert (wchar_t *) to (std::string) function.
    * ARGUMENTS:
    *    - input string:
@@ -173,6 +173,17 @@ public:
   {
     return is_data_ready_flag;
   } /* End of 'is_data_ready' function */
+
+  
+  /***
+   * Convert (std::string) to (wchar_t *) function.
+   * ARGUMENTS:
+   *    - input string:
+   *        const std::string& str_utf8;
+   * RETURNS:
+   *    (std::wstring) result string.
+   ***/
+  std::wstring Utf8toWString( const std::string &str_utf8 );
 }; /* End of 'window_ui' class */
 
 

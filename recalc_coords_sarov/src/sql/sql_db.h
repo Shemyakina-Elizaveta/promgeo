@@ -14,28 +14,63 @@
 #include <cppconn/exception.h>
 
 
-/* Получили имя тахеометра, дату 1, дату 2 ->
- * Вытащили из бд id тахеометра ->
- * Сделали запрос на получение (имя точки, {id цикла, круг[азимут, инклинайшн, расстояние]}) ->
- * Записали в map [имя точки, {все остальное}] ->
- * Вывели в файл все
- */
-
-
 /* Point polar coordinates */
 struct point_polar_coords
 {
-  double azimuth = 0;
-  double inclination = 0;
-  double distance = 0;
+  double azimuth;
+  double inclination;
+  double distance;
+
+  /* Default constructor */
+  point_polar_coords( void ) : azimuth(0), inclination(0), distance(0) {}
+
+  /* Copy constructor */
+  point_polar_coords( const point_polar_coords &np )
+  {
+    azimuth = np.azimuth;
+    inclination = np.inclination;
+    distance = np.distance;
+  }
+
+  point_polar_coords & operator=( const point_polar_coords &np )
+  {
+    azimuth = np.azimuth;
+    inclination = np.inclination;
+    distance = np.distance;
+
+    return *this;
+  }
 }; /* End of 'point_polar_coords' struct */
 
+#if 0
 /* All information about point */
-struct point_info
+struct point_polar_coords [2]
 {
-  int cycle_id = -1;
+  // int cycle_id; // по идее не нужно
   point_polar_coords coords[2]; // 0 - left, 1 - right
-}; /* End of 'point_info' structure */
+
+
+  /* Default constructor */
+  point_polar_coords [2]( void ) : /* cycle_id(-1), */ coords() {}
+
+  /* Copy constructor */
+  point_polar_coords [2]( const point_polar_coords [2] &np )
+  {
+    // cycle_id = np.cycle_id;
+    coords[0] = np.coords[0];
+    coords[1] = np.coords[1];
+  }
+
+  point_polar_coords [2] & operator=( const point_polar_coords [2] &np )
+  {
+    // cycle_id = np.cycle_id;
+    coords[0] = np.coords[0];
+    coords[1] = np.coords[1];
+
+    return *this;
+  }
+}; /* End of 'point_polar_coords [2]' structure */
+#endif
 
 
 /* Working with a database via sql class */ 
@@ -72,18 +107,20 @@ public:
    ***/
   int get_tah_id( std::string &tah_name );
 
-
   /***
    * Get all points information from database function.
    * ARGUMENTS:
+   *    - map for saving points:
+   *        std::map<std::string, std::map<int, point_polar_coords [2]>> &saved_points;
    *    - the name of taheometer from which the measurements are taken:
    *        std::string &tah_name;
    *    - date of measurement (YYYY-MM-DD):
    *        std::string &date;
-   * RETURNS:
-   *    (std::map<std::string, point_info>) map for saving points.
+   * RETURNS: None.
    ***/
-  std::map<std::string, std::vector<point_info>> get_points_from_db( std::string &tah_name, std::string &date );
+  void get_points_from_db( std::map<std::string, std::map<int, point_polar_coords [2]>> &saved_points, std::string &tah_name, std::string &date );
+
+  // <имя, <индекс цикла, информация>>
 
 }; /* End of 'sql_db' class */
 

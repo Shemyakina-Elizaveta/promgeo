@@ -170,11 +170,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\coords\recalc_coords.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sql\sql_db.cpp" />
     <ClCompile Include="src\window\window_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\coords\recalc_coords.h" />
     <ClInclude Include="src\sql\sql_db.h" />
     <ClInclude Include="src\window\window_ui.h" />
   </ItemGroup>

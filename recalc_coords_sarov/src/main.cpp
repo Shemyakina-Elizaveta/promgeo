@@ -5,6 +5,7 @@
 
 #include "sql/sql_db.h"
 #include "window/window_ui.h"
+#include "coords/recalc_coords.h"
 
 
 /***
@@ -45,32 +46,16 @@ int WINAPI wWinMain( HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpCmdLine, int
 
   /* Getting information from database */
   sql_db Database;
-  std::map<std::string, std::vector<point_info>> points_info_first_date;
-
-  points_info_first_date = Database.get_points_from_db(tah_name, d1);
-
-  // Проверка записи в файл
+  std::map<std::string, std::map<int, point_polar_coords [2]>> points_info_first_date, points_info_second_date;
   
-  /*
-  std::ofstream output_file;
-
-  output_file.open("D:/repositories/promgeo/recalc_coords_sarov/results/test.txt");
+  Database.get_points_from_db(points_info_first_date, tah_name, d1);
+  Database.get_points_from_db(points_info_second_date, tah_name, d1);
   
-  if (!output_file.is_open())
-    return;
-
-  output_file << point_name << "\n"
-              << "    cycle_id: " << cycle_id << "\n"
-              << "    circle: " << circle << "\n"
-              << "    azimuth: " << azimuth << "\n"
-              << "    inclination: " << inclination << "\n"
-              << "    distance: " << distance << "\n";
-              */
-
-
-  std::cin.get();
-  std::cin.get();
-  std::cin.get();
+  /* Recalculate points */
+  std::map<std::string, point> result_first_date, result_second_date;
+  
+  recalculate_all_points_coords(tah_name, d1, result_first_date, points_info_first_date);
+  recalculate_all_points_coords(tah_name, d1, result_second_date, points_info_second_date);
 
   return 0;
 }

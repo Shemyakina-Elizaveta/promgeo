@@ -19,6 +19,9 @@
     <Filter Include="Исходные файлы\sql">
       <UniqueIdentifier>{12dc9dfb-aa6f-4225-bba7-759bfd3dd8ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\coords">
+      <UniqueIdentifier>{0c264d8b-2fee-4e1b-9112-88887cbe01d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -30,6 +33,9 @@
     <ClCompile Include="src\sql\sql_db.cpp">
       <Filter>Исходные файлы\sql</Filter>
     </ClCompile>
+    <ClCompile Include="src\coords\recalc_coords.cpp">
+      <Filter>Исходные файлы\coords</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\window\window_ui.h">
@@ -37,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="src\sql\sql_db.h">
       <Filter>Исходные файлы\sql</Filter>
+    </ClInclude>
+    <ClInclude Include="src\coords\recalc_coords.h">
+      <Filter>Исходные файлы\coords</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
